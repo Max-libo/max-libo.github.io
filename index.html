@@ -4,6 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Максим Либо</title>
+  
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
 
@@ -303,6 +304,32 @@
     @media (max-width: 600px) {
       .path-display { grid-template-columns: 1fr; }
     }
+    .aberration {
+      position: relative;
+    }
+
+    .aberration::before,
+    .aberration::after {
+      content: attr(data-text);
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      opacity: 0;
+      transition: opacity 0.1s;
+    }
+
+    .aberration::before {
+      color: #ff0040;
+      mix-blend-mode: screen;
+      transform: translateX(-2px);
+    }
+
+    .aberration::after {
+      color: #00ffff;
+      mix-blend-mode: screen;
+      transform: translateX(2px);
+    }
 
   </style>
 </head>
@@ -311,7 +338,7 @@
 
   <!-- 01 HERO -->
   <div class="label">// 01 — герой</div>
-  <div class="hero-name">Либо<br>Максим</div>
+  <div class="hero-name aberration" data-text="Либо&#10;Максим">Либо<br>Максим</div>
   <div class="hero-title">
     Руководитель направления по работе с ИИ<br>
     ex-креативный продюсер · стратег · креатор
@@ -471,6 +498,41 @@
   handle.addEventListener('touchstart', e => { dragging = true; e.preventDefault(); }, { passive: false });
   document.addEventListener('touchmove', e => { if (dragging) setStep(posToIndex(e.touches[0].clientX)); }, { passive: true });
   document.addEventListener('touchend', () => { dragging = false; });
+  // Chromatic aberration on scroll edges
+  const edgeZone = 120; // px от края экрана
+
+  function updateAberration() {
+    const viewH = window.innerHeight;
+    document.querySelectorAll('.aberration').forEach(el => {
+      const rect = el.getBoundingClientRect();
+      const distTop = rect.top;
+      const distBottom = viewH - rect.bottom;
+      const dist = Math.min(distTop, distBottom);
+      const intensity = dist < edgeZone
+        ? Math.max(0, 1 - dist / edgeZone)
+        : 0;
+      el.style.setProperty('--ab-opacity', intensity);
+      el.querySelector('::before'); // trigger
+      el.style.opacity = intensity > 0
+        ? (0.4 + 0.6 * (1 - intensity)).toString()
+        : '';
+
+      // применяем через filter
+      if (intensity > 0) {
+        el.style.textShadow = `
+          ${-2 * intensity}px 0 1px rgba(255,0,64,${intensity * 0.8}),
+          ${2 * intensity}px 0 1px rgba(0,255,255,${intensity * 0.8})
+        `;
+      } else {
+        el.style.textShadow = '';
+      }
+    });
+  }
+
+  window.addEventListener('scroll', updateAberration, { passive: true });
+  updateAberration();
+
+  
 </script>
 
 </body>
