@@ -183,12 +183,12 @@
       .timeline-header { flex-direction: column; gap: 4px; }
     }
         /* PATH */
-    .path-display {
+      .path-display {
       display: grid;
       grid-template-columns: 1fr 1fr;
       gap: 40px;
       align-items: center;
-      margin-bottom: 40px;
+      margin-bottom: 48px;
     }
 
     .path-image img {
@@ -197,12 +197,13 @@
       object-fit: cover;
       filter: grayscale(100%);
       opacity: 0.6;
+      transition: opacity 0.3s;
     }
 
     .path-info {
       display: flex;
       flex-direction: column;
-      gap: 12px;
+      gap: 14px;
     }
 
     .path-year {
@@ -210,65 +211,85 @@
       letter-spacing: 5px;
       opacity: 0.35;
       text-transform: uppercase;
+      transition: opacity 0.2s;
     }
 
     .path-role {
-      font-size: 18px;
+      font-size: 16px;
       font-weight: 300;
       letter-spacing: 4px;
       text-transform: uppercase;
+      transition: all 0.2s;
     }
 
     .path-desc {
       font-size: 13px;
       opacity: 0.55;
       line-height: 1.9;
-    }
-
-    .path-timeline {
-      display: flex;
-      align-items: flex-end;
-      gap: 0;
-      border-top: 1px solid rgba(255,255,255,0.1);
-      padding-top: 0;
-    }
-
-    .path-tick {
-      flex: 1;
-      cursor: pointer;
-      padding-top: 12px;
-      opacity: 0.3;
       transition: opacity 0.2s;
     }
 
-    .path-tick:hover { opacity: 0.7; }
-
-    .path-tick.active-now,
-    .path-tick.selected { opacity: 1; }
-
-    .tick-line {
-      width: 1px;
-      height: 8px;
-      background: rgba(255,255,255,0.4);
+    .slider-wrap {
       margin-bottom: 8px;
     }
 
-    .path-tick.active-now .tick-line,
-    .path-tick.selected .tick-line {
-      height: 16px;
-      background: #ffffff;
+    .slider-track {
+      position: relative;
+      height: 1px;
+      background: rgba(255,255,255,0.15);
+      margin-bottom: 16px;
+      cursor: pointer;
     }
 
-    .tick-label {
+    .slider-fill {
+      position: absolute;
+      left: 0;
+      top: 0;
+      height: 1px;
+      background: rgba(255,255,255,0.6);
+      transition: width 0.15s;
+    }
+
+    .slider-handle {
+      position: absolute;
+      top: 50%;
+      transform: translate(-50%, -50%);
+      width: 12px;
+      height: 12px;
+      background: #fff;
+      border-radius: 50%;
+      cursor: grab;
+      transition: width 0.15s, height 0.15s;
+    }
+
+    .slider-handle:active { cursor: grabbing; }
+
+    .slider-handle:hover {
+      width: 16px;
+      height: 16px;
+    }
+
+    .handle-year {
+      position: absolute;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: 9px;
+      letter-spacing: 3px;
+      white-space: nowrap;
+      opacity: 0.7;
+    }
+
+    .slider-labels {
+      display: flex;
+      justify-content: space-between;
       font-size: 9px;
       letter-spacing: 2px;
-      opacity: 0.6;
-      white-space: nowrap;
+      opacity: 0.25;
     }
 
     @media (max-width: 600px) {
       .path-display { grid-template-columns: 1fr; }
-      .tick-label { font-size: 7px; letter-spacing: 1px; }
     }
 
   </style>
@@ -297,13 +318,12 @@
   </div>
 
   <div class="line"></div>
-
   <!-- 03 ПУТЬ -->
   <div class="label">// 03 — путь</div>
 
   <div class="path-display">
     <div class="path-image">
-      <img id="path-img" src="https://placehold.co/800x400/0a0a0a/333333?text=1" alt="placeholder">
+      <img id="path-img" src="https://placehold.co/800x400/0a0a0a/333333?text=1" alt="">
     </div>
     <div class="path-info">
       <div class="path-year" id="path-year">2025–2026</div>
@@ -312,38 +332,22 @@
     </div>
   </div>
 
-  <div class="path-timeline">
-    <div class="path-tick active" data-index="0">
-      <div class="tick-line"></div>
-      <div class="tick-label">2018</div>
+  <div class="slider-wrap">
+    <div class="slider-track" id="sliderTrack">
+      <div class="slider-fill" id="sliderFill"></div>
+      <div class="slider-handle" id="sliderHandle">
+        <div class="handle-year" id="handleYear">2025–26</div>
+      </div>
     </div>
-    <div class="path-tick" data-index="1">
-      <div class="tick-line"></div>
-      <div class="tick-label">2019</div>
-    </div>
-    <div class="path-tick" data-index="2">
-      <div class="tick-line"></div>
-      <div class="tick-label">2020</div>
-    </div>
-    <div class="path-tick" data-index="3">
-      <div class="tick-line"></div>
-      <div class="tick-label">2021</div>
-    </div>
-    <div class="path-tick" data-index="4">
-      <div class="tick-line"></div>
-      <div class="tick-label">2021–22</div>
-    </div>
-    <div class="path-tick" data-index="5">
-      <div class="tick-line"></div>
-      <div class="tick-label">2023</div>
-    </div>
-    <div class="path-tick" data-index="6">
-      <div class="tick-line"></div>
-      <div class="tick-label">2024–25</div>
-    </div>
-    <div class="path-tick active-now" data-index="7">
-      <div class="tick-line"></div>
-      <div class="tick-label">2025–26</div>
+    <div class="slider-labels">
+      <span>2018</span>
+      <span>2019</span>
+      <span>2020</span>
+      <span>2021</span>
+      <span>2022</span>
+      <span>2023</span>
+      <span>2024</span>
+      <span>2025</span>
     </div>
   </div>
 
@@ -384,34 +388,63 @@
 </div>
 
 <script>
-   const steps = [
-    { year: '2018', role: 'Пикчер', desc: 'Учился визуальному языку интернета и мем-культуре. Первый контакт с рекламной индустрией.', img: 'https://placehold.co/800x400/0a0a0a/333333?text=1' },
-    { year: '2019', role: 'SMM-аналитик', desc: 'Научился видеть аудиторию через данные. Работал с крупными брендами: Ситилинк, Моспром, РКЦ.', img: 'https://placehold.co/800x400/0a0a0a/333333?text=2' },
-    { year: '2020', role: 'Креатор', desc: 'Придумывал рекламные концепции. Участвовал в тендерах для Яндекса, Авито, Тинькофф и десятков других брендов.', img: 'https://placehold.co/800x400/0a0a0a/333333?text=3' },
-    { year: '2021', role: 'Стратег', desc: 'Связывал креатив с бизнес-целями. Защищал стратегии и обосновывал решения перед клиентами.', img: 'https://placehold.co/800x400/0a0a0a/333333?text=4' },
-    { year: '2021–2022', role: 'Креативный продюсер', desc: 'Делал идеи реальными проектами. От фотосессий до трёхдневных съёмок в шахте на глубине 726 метров.', img: 'https://placehold.co/800x400/0a0a0a/333333?text=5' },
-    { year: '2023', role: 'Продюсер шоу и подкастов', desc: 'Запускал видео и аудиопроекты. Отвечал за всё — от концепта и сценария до финального монтажа.', img: 'https://placehold.co/800x400/0a0a0a/333333?text=6' },
-    { year: '2024–2025', role: 'Ведущий креатор', desc: 'Отвечал за концепции и смыслы в коммуникациях. Формировал голос бренда.', img: 'https://placehold.co/800x400/0a0a0a/333333?text=7' },
-    { year: '2025–2026', role: 'Руководитель направления ИИ', desc: 'Строю систему генерации нейроконтента. Внедряю ИИ в процессы организации, провожу хакатоны, обучаю команду.', img: 'https://placehold.co/800x400/0a0a0a/333333?text=8' },
+ <script>
+  const steps = [
+    { year: '2018',    short: '2018',  role: 'Пикчер',                    desc: 'Учился визуальному языку интернета и мем-культуре. Первый контакт с рекламной индустрией.',                                          img: 'https://placehold.co/800x400/0a0a0a/333333?text=1' },
+    { year: '2019',    short: '2019',  role: 'SMM-аналитик',               desc: 'Научился видеть аудиторию через данные. Работал с крупными брендами: Ситилинк, Моспром, РКЦ.',                                        img: 'https://placehold.co/800x400/0a0a0a/333333?text=2' },
+    { year: '2020',    short: '2020',  role: 'Креатор',                    desc: 'Придумывал рекламные концепции. Участвовал в тендерах для Яндекса, Авито, Тинькофф и десятков других брендов.',                       img: 'https://placehold.co/800x400/0a0a0a/333333?text=3' },
+    { year: '2021',    short: '2021',  role: 'Стратег',                    desc: 'Связывал креатив с бизнес-целями. Защищал стратегии и обосновывал решения перед клиентами.',                                          img: 'https://placehold.co/800x400/0a0a0a/333333?text=4' },
+    { year: '2022', short: '2022', role: 'Креативный продюсер',      desc: 'Делал идеи реальными проектами. От фотосессий до трёхдневных съёмок в шахте на глубине 726 метров.',                                  img: 'https://placehold.co/800x400/0a0a0a/333333?text=5' },
+    { year: '2023',    short: '2023',  role: 'Продюсер шоу и подкастов',   desc: 'Запускал видео и аудиопроекты. Отвечал за всё — от концепта и сценария до финального монтажа.',                                      img: 'https://placehold.co/800x400/0a0a0a/333333?text=6' },
+    { year: '2024', short: '2024', role: 'Ведущий креатор',          desc: 'Отвечал за концепции и смыслы в коммуникациях. Формировал голос бренда.',                                                             img: 'https://placehold.co/800x400/0a0a0a/333333?text=7' },
+    { year: '2025', short: '2025', role: 'Руководитель направления ИИ', desc: 'Строю систему генерации нейроконтента. Внедряю ИИ в процессы организации, провожу хакатоны, обучаю команду.',                     img: 'https://placehold.co/800x400/0a0a0a/333333?text=8' },
   ];
 
-  function selectStep(index) {
+  let current = 7;
+  const track = document.getElementById('sliderTrack');
+  const handle = document.getElementById('sliderHandle');
+  const fill = document.getElementById('sliderFill');
+
+  function setStep(index) {
+    if (index === current) return;
+    current = index;
     const s = steps[index];
+    const pct = (index / (steps.length - 1)) * 100;
+
+    handle.style.left = pct + '%';
+    fill.style.width = pct + '%';
+    document.getElementById('handleYear').textContent = s.short;
     document.getElementById('path-year').textContent = s.year;
     document.getElementById('path-role').textContent = s.role;
     document.getElementById('path-desc').textContent = s.desc;
     document.getElementById('path-img').src = s.img;
-    document.querySelectorAll('.path-tick').forEach((t, i) => {
-      t.classList.remove('selected', 'active-now');
-      if (i === index) t.classList.add(index === 7 ? 'active-now' : 'selected');
-    });
   }
 
-  document.querySelectorAll('.path-tick').forEach((tick) => {
-    tick.addEventListener('click', () => selectStep(parseInt(tick.dataset.index)));
-  });
+  function posToIndex(clientX) {
+    const rect = track.getBoundingClientRect();
+    const pct = Math.max(0, Math.min(1, (clientX - rect.left) / rect.width));
+    return Math.round(pct * (steps.length - 1));
+  }
 
-  selectStep(7);
+  // init
+  handle.style.left = '100%';
+  fill.style.width = '100%';
+  document.getElementById('handleYear').textContent = steps[7].short;
+
+  // drag
+  let dragging = false;
+
+  handle.addEventListener('mousedown', e => { dragging = true; e.preventDefault(); });
+  track.addEventListener('mousedown', e => { setStep(posToIndex(e.clientX)); dragging = true; });
+
+  document.addEventListener('mousemove', e => { if (dragging) setStep(posToIndex(e.clientX)); });
+  document.addEventListener('mouseup', () => { dragging = false; });
+
+  // touch
+  handle.addEventListener('touchstart', e => { dragging = true; e.preventDefault(); }, { passive: false });
+  document.addEventListener('touchmove', e => { if (dragging) setStep(posToIndex(e.touches[0].clientX)); }, { passive: true });
+  document.addEventListener('touchend', () => { dragging = false; });
+</script>
 
 </script>
 </body>
