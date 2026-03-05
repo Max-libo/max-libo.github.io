@@ -5,25 +5,21 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Максим Либо</title>
   <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
 
     body {
-      background-color: #0a0a0a;
+      background-color: #080808;
       color: #ffffff;
       font-family: 'Courier New', monospace;
       min-height: 100vh;
       background-image:
-        linear-gradient(rgba(255,255,255,0.04) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(255,255,255,0.04) 1px, transparent 1px);
+        linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px);
       background-size: 40px 40px;
     }
 
     .container {
-      max-width: 800px;
+      max-width: 860px;
       margin: 0 auto;
       padding: 80px 40px;
     }
@@ -31,49 +27,299 @@
     .line {
       width: 100%;
       height: 1px;
-      background: rgba(255,255,255,0.3);
-      margin: 40px 0;
+      background: rgba(255,255,255,0.15);
+      margin: 56px 0;
     }
 
-    h1 {
-      font-size: 48px;
-      font-weight: 300;
-      letter-spacing: 8px;
+    .label {
+      font-size: 10px;
+      letter-spacing: 6px;
+      opacity: 0.35;
       text-transform: uppercase;
+      margin-bottom: 24px;
     }
 
-    .subtitle {
+    /* HERO */
+    .hero-name {
+      font-size: 56px;
+      font-weight: 300;
+      letter-spacing: 10px;
+      text-transform: uppercase;
+      line-height: 1.1;
+    }
+
+    .hero-title {
       font-size: 12px;
       letter-spacing: 4px;
       opacity: 0.5;
       text-transform: uppercase;
-      margin-top: 12px;
+      margin-top: 16px;
+      line-height: 2;
     }
 
-    .section-label {
-      font-size: 10px;
-      letter-spacing: 6px;
-      opacity: 0.4;
-      text-transform: uppercase;
-      margin-bottom: 16px;
+    .hero-tagline {
+      font-size: 14px;
+      opacity: 0.6;
+      margin-top: 28px;
+      line-height: 1.9;
+      max-width: 580px;
+      border-left: 1px solid rgba(255,255,255,0.2);
+      padding-left: 20px;
     }
 
-    p {
+    /* ABOUT */
+    .about-text {
       font-size: 14px;
       line-height: 2;
-      opacity: 0.7;
+      opacity: 0.65;
+      max-width: 640px;
+    }
+
+    /* TIMELINE */
+    .timeline {
+      position: relative;
+      padding-left: 32px;
+    }
+
+    .timeline::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 8px;
+      bottom: 8px;
+      width: 1px;
+      background: rgba(255,255,255,0.15);
+    }
+
+    .timeline-item {
+      position: relative;
+      margin-bottom: 0;
+      cursor: pointer;
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+    }
+
+    .timeline-item::before {
+      content: '';
+      position: absolute;
+      left: -36px;
+      top: 20px;
+      width: 5px;
+      height: 5px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.3);
+      transition: background 0.2s;
+    }
+
+    .timeline-item.active::before,
+    .timeline-item:hover::before {
+      background: #ffffff;
+    }
+
+    .timeline-header {
+      display: flex;
+      align-items: baseline;
+      gap: 20px;
+      padding: 16px 0;
+    }
+
+    .timeline-year {
+      font-size: 10px;
+      letter-spacing: 4px;
+      opacity: 0.35;
+      min-width: 80px;
+      text-transform: uppercase;
+    }
+
+    .timeline-role {
+      font-size: 13px;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      opacity: 0.8;
+      transition: opacity 0.2s;
+    }
+
+    .timeline-item:hover .timeline-role,
+    .timeline-item.active .timeline-role {
+      opacity: 1;
+    }
+
+    .timeline-desc {
+      font-size: 12px;
+      opacity: 0.45;
+      line-height: 1.8;
+      padding: 0 0 16px 100px;
+      display: none;
+    }
+
+    .timeline-item.active .timeline-desc {
+      display: block;
+    }
+
+    /* CONTACTS */
+    .contacts { display: flex; flex-direction: column; gap: 16px; }
+
+    .contact-row {
+      display: flex;
+      align-items: center;
+      gap: 24px;
+      font-size: 12px;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+    }
+
+    .contact-label {
+      opacity: 0.3;
+      min-width: 80px;
+      font-size: 10px;
+    }
+
+    a { color: #ffffff; text-decoration: none; opacity: 0.55; letter-spacing: 2px; transition: opacity 0.2s; }
+    a:hover { opacity: 1; }
+
+    @media (max-width: 600px) {
+      .hero-name { font-size: 34px; letter-spacing: 6px; }
+      .container { padding: 48px 24px; }
+      .timeline-desc { padding-left: 0; }
+      .timeline-header { flex-direction: column; gap: 4px; }
     }
   </style>
 </head>
 <body>
-  <div class="container">
-    <div class="section-label">// портфолио</div>
-    <h1>Максим Либо</h1>
-    <p class="subtitle">Дизайнер · Москва</p>
-    <div class="line"></div>
-    <div class="section-label">// обо мне</div>
-    <p>Напиши здесь пару слов о себе.</p>
-    <div class="line"></div>
+<div class="container">
+
+  <!-- 01 HERO -->
+  <div class="label">// 01 — герой</div>
+  <div class="hero-name">Либо<br>Максим</div>
+  <div class="hero-title">
+    Руководитель направления по работе с ИИ<br>
+    ex-креативный продюсер · стратег · креатор
   </div>
+  <div class="hero-tagline">
+    8 лет в креативе → сейчас строю системы генерации нейроконтента и внедряю ИИ в процессы
+  </div>
+
+  <div class="line"></div>
+
+  <!-- 02 О МНЕ -->
+  <div class="label">// 02 — о мне</div>
+  <div class="about-text">
+    Руковожу направлением по работе с искусственным интеллектом. Под моим управлением — отдел генерации нейроконтента: распределяю задачи, слежу за загрузкой и качеством.<br><br>
+    Вместе с командой организую обучение сотрудников, провожу хакатоны и обеспечиваю проникновение ИИ-инструментов во все службы организации. Строю не просто контент — строю систему.
+  </div>
+
+  <div class="line"></div>
+
+  <!-- 03 ПУТЬ -->
+  <div class="label">// 03 — путь</div>
+  <div class="timeline">
+
+    <div class="timeline-item" onclick="toggle(this)">
+      <div class="timeline-header">
+        <span class="timeline-year">2018</span>
+        <span class="timeline-role">Пикчер</span>
+      </div>
+      <div class="timeline-desc">Учился визуальному языку интернета и мем-культуре. Первый контакт с рекламной индустрией.</div>
+    </div>
+
+    <div class="timeline-item" onclick="toggle(this)">
+      <div class="timeline-header">
+        <span class="timeline-year">2019</span>
+        <span class="timeline-role">SMM-аналитик</span>
+      </div>
+      <div class="timeline-desc">Научился видеть аудиторию через данные. Работал с крупными брендами: Ситилинк, Моспром, РКЦ.</div>
+    </div>
+
+    <div class="timeline-item" onclick="toggle(this)">
+      <div class="timeline-header">
+        <span class="timeline-year">2020</span>
+        <span class="timeline-role">Креатор</span>
+      </div>
+      <div class="timeline-desc">Придумывал рекламные концепции. Участвовал в тендерах для Яндекса, Авито, Тинькофф и десятков других брендов.</div>
+    </div>
+
+    <div class="timeline-item" onclick="toggle(this)">
+      <div class="timeline-header">
+        <span class="timeline-year">2021</span>
+        <span class="timeline-role">Стратег</span>
+      </div>
+      <div class="timeline-desc">Связывал креатив с бизнес-целями. Защищал стратегии и обосновывал решения перед клиентами.</div>
+    </div>
+
+    <div class="timeline-item" onclick="toggle(this)">
+      <div class="timeline-header">
+        <span class="timeline-year">2021–2022</span>
+        <span class="timeline-role">Креативный продюсер</span>
+      </div>
+      <div class="timeline-desc">Делал идеи реальными проектами. От фотосессий до трёхдневных съёмок в шахте на глубине 726 метров.</div>
+    </div>
+
+    <div class="timeline-item" onclick="toggle(this)">
+      <div class="timeline-header">
+        <span class="timeline-year">2023</span>
+        <span class="timeline-role">Продюсер шоу и подкастов</span>
+      </div>
+      <div class="timeline-desc">Запускал видео и аудиопроекты. Отвечал за всё — от концепта и сценария до финального монтажа.</div>
+    </div>
+
+    <div class="timeline-item" onclick="toggle(this)">
+      <div class="timeline-header">
+        <span class="timeline-year">2024–2025</span>
+        <span class="timeline-role">Ведущий креатор</span>
+      </div>
+      <div class="timeline-desc">Отвечал за концепции и смыслы в коммуникациях. Формировал голос бренда.</div>
+    </div>
+
+    <div class="timeline-item active" onclick="toggle(this)">
+      <div class="timeline-header">
+        <span class="timeline-year">2025–2026</span>
+        <span class="timeline-role">Руководитель направления ИИ</span>
+      </div>
+      <div class="timeline-desc">Строю систему генерации нейроконтента. Внедряю ИИ в процессы организации, провожу хакатоны, обучаю команду.</div>
+    </div>
+
+  </div>
+
+  <div class="line"></div>
+
+  <!-- 04 ПРОЕКТЫ -->
+  <div class="label">// 04 — проекты</div>
+  <div class="about-text" style="opacity:0.35; font-style: italic;">
+    Скоро здесь появятся кейсы.
+  </div>
+
+  <div class="line"></div>
+
+  <!-- 05 КОНТАКТЫ -->
+  <div class="label">// 05 — контакты</div>
+  <div class="contacts">
+    <div class="contact-row">
+      <span class="contact-label">Telegram</span>
+      <a href="https://t.me/max_libo">@max_libo</a>
+    </div>
+    <div class="contact-row">
+      <span class="contact-label">Телефон</span>
+      <a href="tel:+79779747144">+7 977 974-71-44</a>
+    </div>
+    <div class="contact-row">
+      <span class="contact-label">VK</span>
+      <a href="https://vk.com/max_libo">@max_libo</a>
+    </div>
+    <div class="contact-row">
+      <span class="contact-label">Instagram</span>
+      <a href="https://instagram.com/max_libo">@max_libo</a>
+    </div>
+  </div>
+
+  <div class="line"></div>
+
+</div>
+
+<script>
+  function toggle(el) {
+    const isActive = el.classList.contains('active');
+    document.querySelectorAll('.timeline-item').forEach(i => i.classList.remove('active'));
+    if (!isActive) el.classList.add('active');
+  }
+</script>
 </body>
 </html>
