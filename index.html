@@ -513,10 +513,7 @@
         : 0;
       el.style.setProperty('--ab-opacity', intensity);
       el.querySelector('::before'); // trigger
-      el.style.opacity = intensity > 0
-        ? (0.4 + 0.6 * (1 - intensity)).toString()
-        : '';
-
+      
       // применяем через filter
       if (intensity > 0) {
         el.style.textShadow = `
