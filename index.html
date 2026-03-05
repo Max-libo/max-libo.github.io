@@ -280,13 +280,25 @@
       opacity: 0.7;
     }
 
-    .slider-labels {
+     .slider-labels {
       display: flex;
       justify-content: space-between;
       font-size: 9px;
       letter-spacing: 2px;
       opacity: 0.25;
+      cursor: pointer;
     }
+
+    .slider-labels span:hover {
+      opacity: 1;
+    }
+
+    .slider-labels span.active {
+      opacity: 1;
+      font-weight: bold;
+      color: #ffffff;
+    }
+
 
     @media (max-width: 600px) {
       .path-display { grid-template-columns: 1fr; }
@@ -339,17 +351,18 @@
         <div class="handle-year" id="handleYear">2025–26</div>
       </div>
     </div>
-    <div class="slider-labels">
-      <span>2018</span>
-      <span>2019</span>
-      <span>2020</span>
-      <span>2021</span>
-      <span>2022</span>
-      <span>2023</span>
-      <span>2024</span>
-      <span>2025</span>
+
+          <div class="slider-labels" id="sliderLabels">
+      <span data-index="0">2018</span>
+      <span data-index="1">2019</span>
+      <span data-index="2">2020</span>
+      <span data-index="3">2021</span>
+      <span data-index="4">2022</span>
+      <span data-index="5">2023</span>
+      <span data-index="6">2024</span>
+      <span data-index="7">2025</span>
     </div>
-  </div>
+
 
 
   <div class="line"></div>
@@ -417,6 +430,8 @@
     document.getElementById('path-role').textContent = s.role;
     document.getElementById('path-desc').textContent = s.desc;
     document.getElementById('path-img').src = s.img;
+      updateLabels(index);
+
   }
 
   function posToIndex(clientX) {
@@ -425,10 +440,23 @@
     return Math.round(pct * (steps.length - 1));
   }
 
-  // init
+    // init
   handle.style.left = '100%';
+    updateLabels(7);
   fill.style.width = '100%';
   document.getElementById('handleYear').textContent = steps[7].short;
+
+  // labels click
+  document.querySelectorAll('#sliderLabels span').forEach(span => {
+    span.addEventListener('click', () => setStep(parseInt(span.dataset.index)));
+  });
+
+  function updateLabels(index) {
+    document.querySelectorAll('#sliderLabels span').forEach((span, i) => {
+      span.classList.toggle('active', i === index);
+    });
+  }
+
 
   // drag
   let dragging = false;
