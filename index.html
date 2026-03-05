@@ -338,7 +338,7 @@
 
   <!-- 01 HERO -->
   <div class="label">// 01 — герой</div>
-  <div class="hero-name aberration" data-text="Либо&#10;Максим">Либо<br>Максим</div>
+  <div class="hero-name">Либо<br>Максим</div>
   <div class="hero-title">
     Руководитель направления по работе с ИИ<br>
     ex-креативный продюсер · стратег · креатор
@@ -503,7 +503,7 @@
 
   function updateAberration() {
     const viewH = window.innerHeight;
-    document.querySelectorAll('.aberration').forEach(el => {
+    document.querySelectorAll('p, h1, h2, div.hero-name, div.hero-title, div.hero-tagline, div.about-text, div.path-role, div.path-desc, div.path-year, div.timeline-role, div.contact-row').forEach(el => {
       const rect = el.getBoundingClientRect();
       const distTop = rect.top;
       const distBottom = viewH - rect.bottom;
