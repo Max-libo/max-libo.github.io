@@ -354,6 +354,60 @@ letter-spacing: 0.05em;
 
 footer a:hover { color: var(–blue); }
 
+/* Style tabs */
+.style-tabs {
+display: none;
+gap: 0;
+margin-bottom: 0;
+border-bottom: 1px solid var(–blue-dim);
+}
+
+.style-tab {
+background: transparent;
+border: 1px solid var(–blue-dim);
+border-bottom: none;
+color: var(–text-dim);
+font-family: var(–mono);
+font-size: 11px;
+letter-spacing: 0.15em;
+padding: 10px 20px;
+cursor: pointer;
+text-transform: uppercase;
+transition: all 0.2s;
+margin-right: -1px;
+position: relative;
+}
+
+.style-tab:hover {
+color: var(–text);
+border-color: var(–blue);
+}
+
+.style-tab.active {
+color: var(–accent);
+border-color: var(–blue);
+background: rgba(0,120,255,0.08);
+}
+
+.style-tab.active::after {
+content: ‘’;
+position: absolute;
+bottom: -1px;
+left: 0;
+right: 0;
+height: 1px;
+background: var(–bg);
+}
+
+.outfit-panel-tabbed {
+border: 1px solid var(–blue-dim);
+border-top: none;
+padding: 24px;
+display: none;
+position: relative;
+animation: fadeIn 0.3s ease;
+}
+
 /* Loading dots */
 .dots::after {
 content: ‘’;
@@ -409,7 +463,12 @@ animation: dots 1.2s infinite;
     </div>
   </div>
 
-  <div class="outfit-panel" id="outfitPanel">
+  <div class="style-tabs" id="styleTabs">
+    <button class="style-tab active" onclick="switchStyle('casual')">// Повседневный</button>
+    <button class="style-tab" onclick="switchStyle('sport')">// Спортивный</button>
+    <button class="style-tab" onclick="switchStyle('business')">// Деловой</button>
+  </div>
+  <div class="outfit-panel-tabbed" id="outfitPanel">
     <div id="outfitContent"></div>
   </div>
 
@@ -421,90 +480,118 @@ animation: dots 1.2s infinite;
 
 <script>
 // ─── OUTFIT DATABASE ───────────────────────────────────────────────────────────
-// Наборы одежды под разные условия.
-// Логика: температура + ветер + осадки
+// Три стиля: casual, sport, business — каждый под свои погодные условия
 
-function getOutfit(temp, feelsLike, rain, wind, humidity) {
-  let top = [];
-  let bottom = [];
-  let shoes = [];
-  let outer = [];
-  let extras = [];
-  let note = null;
+let currentWeather = null;
+let currentStyle = 'casual';
 
-  // ── ВЕРХ ──
+function getOutfits(temp, feelsLike, rain, wind, humidity) {
+  const note = buildNote(temp, feelsLike, wind);
+
+  // ── ПОВСЕДНЕВНЫЙ ──
+  const casual = { note };
   if (feelsLike >= 25) {
-    top = ['Футболка или лёгкая рубашка'];
+    casual.top = ['Футболка'];
+    casual.bottom = ['Шорты или лёгкие брюки'];
+    casual.outer = [];
+    casual.shoes = rain > 0.5 ? ['Кроссовки или лёгкие ботинки'] : ['Кроссовки или сандалии'];
   } else if (feelsLike >= 18) {
-    top = ['Футболка', 'Лёгкий лонгслив как вариант'];
-  } else if (feelsLike >= 12) {
-    top = ['Лонгслив или рубашка', 'Лёгкий свитер поверх'];
-  } else if (feelsLike >= 5) {
-    top = ['Термобельё или плотный свитер', 'Флис или толстовка'];
-  } else {
-    top = ['Термобельё (базовый слой)', 'Флис или толстый свитер (средний слой)'];
-  }
-
-  // ── НИЗ ──
-  if (feelsLike >= 22) {
-    bottom = ['Шорты или лёгкие брюки'];
-  } else if (feelsLike >= 14) {
-    bottom = ['Джинсы или хлопковые брюки'];
-  } else if (feelsLike >= 5) {
-    bottom = ['Плотные джинсы или утеплённые брюки'];
-  } else {
-    bottom = ['Термобельё под брюки', 'Плотные брюки или джинсы'];
-  }
-
-  // ── ВЕРХНЯЯ ОДЕЖДА ──
-  if (feelsLike >= 22) {
-    outer = [];
-  } else if (feelsLike >= 16) {
-    outer = ['Лёгкая ветровка или рубашка с длинным рукавом'];
+    casual.top = ['Футболка или лёгкий лонгслив'];
+    casual.bottom = ['Джинсы или хлопковые брюки'];
+    casual.outer = ['Лёгкая рубашка или ветровка'];
+    casual.shoes = rain > 0.5 ? ['Кроссовки'] : ['Кроссовки или лоферы'];
   } else if (feelsLike >= 10) {
-    outer = ['Демисезонная куртка или пальто'];
-  } else if (feelsLike >= 2) {
-    outer = ['Зимняя куртка или пуховик'];
+    casual.top = ['Лонгслив или свитшот'];
+    casual.bottom = ['Джинсы'];
+    casual.outer = ['Демисезонная куртка или тренч'];
+    casual.shoes = rain > 0.5 ? ['Ботинки или непромокаемые кроссовки'] : ['Кроссовки или ботинки'];
+  } else if (feelsLike >= 0) {
+    casual.top = ['Термобельё', 'Толстовка или свитер'];
+    casual.bottom = ['Плотные джинсы'];
+    casual.outer = ['Зимняя куртка'];
+    casual.shoes = ['Утеплённые ботинки'];
   } else {
-    outer = ['Тёплый пуховик или шуба'];
+    casual.top = ['Термобельё (базовый слой)', 'Флис или толстый свитер'];
+    casual.bottom = ['Термобельё под брюки', 'Плотные брюки'];
+    casual.outer = ['Тёплый пуховик'];
+    casual.shoes = ['Зимние ботинки'];
   }
+  casual.extras = buildExtras(feelsLike, rain, wind, humidity);
 
-  // ── ОБУВЬ ──
-  if (rain > 0.5) {
-    shoes = ['Водонепроницаемая обувь или ботинки'];
-  } else if (feelsLike >= 20) {
-    shoes = ['Кроссовки, сандалии или лёгкая обувь'];
-  } else if (feelsLike >= 8) {
-    shoes = ['Кроссовки или демисезонные ботинки'];
+  // ── СПОРТИВНЫЙ ──
+  const sport = { note };
+  if (feelsLike >= 20) {
+    sport.top = ['Спортивная футболка (дышащая ткань)'];
+    sport.bottom = ['Шорты или тайтсы'];
+    sport.outer = [];
+    sport.shoes = rain > 0.5 ? ['Беговые кроссовки с водоотталкивающим верхом'] : ['Беговые или спортивные кроссовки'];
+  } else if (feelsLike >= 12) {
+    sport.top = ['Спортивный лонгслив или термофутболка'];
+    sport.bottom = ['Тайтсы или спортивные брюки'];
+    sport.outer = ['Лёгкая спортивная ветровка'];
+    sport.shoes = ['Беговые кроссовки'];
+  } else if (feelsLike >= 4) {
+    sport.top = ['Термобельё', 'Флисовый джемпер'];
+    sport.bottom = ['Утеплённые тайтсы'];
+    sport.outer = ['Ветрозащитная куртка'];
+    sport.shoes = ['Беговые кроссовки с утеплением'];
   } else {
-    shoes = ['Утеплённые ботинки или зимние кроссовки'];
+    sport.top = ['Термобельё (плотное)', 'Флис'];
+    sport.bottom = ['Утеплённые тайтсы или штаны'];
+    sport.outer = ['Зимняя спортивная куртка'];
+    sport.shoes = ['Зимние беговые кроссовки или ботинки'];
   }
+  sport.extras = buildExtras(feelsLike, rain, wind, humidity, true);
 
-  // ── АКСЕССУАРЫ ──
+  // ── ДЕЛОВОЙ ──
+  const business = { note };
+  if (feelsLike >= 22) {
+    business.top = ['Рубашка или лёгкая блузка'];
+    business.bottom = ['Брюки или юбка'];
+    business.outer = [];
+    business.shoes = ['Туфли или лоферы'];
+  } else if (feelsLike >= 14) {
+    business.top = ['Рубашка + тонкий джемпер или пиджак'];
+    business.bottom = ['Брюки или деловая юбка'];
+    business.outer = ['Пальто или тренч'];
+    business.shoes = rain > 0.5 ? ['Закрытые туфли или ботинки'] : ['Туфли или дерби'];
+  } else if (feelsLike >= 5) {
+    business.top = ['Рубашка + свитер или водолазка', 'Пиджак поверх'];
+    business.bottom = ['Деловые брюки'];
+    business.outer = ['Пальто или утеплённый тренч'];
+    business.shoes = ['Ботинки или закрытые туфли'];
+  } else {
+    business.top = ['Термобельё (невидимый слой)', 'Рубашка + пиджак'];
+    business.bottom = ['Деловые брюки (с термобельём под низ)'];
+    business.outer = ['Тёплое пальто или пуховик'];
+    business.shoes = ['Утеплённые ботинки'];
+  }
+  business.extras = buildExtras(feelsLike, rain, wind, humidity);
+
+  return { casual, sport, business };
+}
+
+function buildExtras(feelsLike, rain, wind, humidity, isSport = false) {
+  const extras = [];
   if (rain > 1) extras.push('Зонт');
-  if (rain > 0.1 && rain <= 1) extras.push('Складной зонт на всякий случай');
-  if (feelsLike < 5) extras.push('Шапка');
-  if (feelsLike < 2) extras.push('Шарф');
+  else if (rain > 0.1) extras.push('Складной зонт');
+  if (feelsLike < 5) extras.push(isSport ? 'Спортивная шапка' : 'Шапка');
+  if (feelsLike < 2) extras.push(isSport ? 'Бафф или балаклава' : 'Шарф');
   if (feelsLike < -5) extras.push('Перчатки');
-  if (wind > 30) extras.push('Ветрозащитный слой');
+  if (wind > 30) extras.push('Ветрозащитный слой обязателен');
   if (feelsLike >= 20 && humidity < 40) extras.push('Солнечные очки');
+  return extras;
+}
 
-  // ── ЗАМЕТКИ ──
-  if (temp - feelsLike >= 5) {
-    note = `<strong>// ВЕТЕР:</strong> Ощущается холоднее реального — ${temp}°C снаружи, но ощущается как ${feelsLike}°C. Одевайтесь по ощущаемой температуре.`;
-  } else if (feelsLike >= 28) {
-    note = `<strong>// ЖАРА:</strong> Лёгкая, дышащая одежда. Не забудьте воду.`;
-  } else if (feelsLike <= -10) {
-    note = `<strong>// МОРОЗ:</strong> Открытые участки кожи мёрзнут быстро. Закройте лицо и руки.`;
-  }
-
-  return { top, bottom, outer, shoes, extras, note };
+function buildNote(temp, feelsLike, wind) {
+  if (temp - feelsLike >= 5) return `<strong>// ВЕТЕР:</strong> Реально ${Math.round(temp)}°C, но ощущается как ${Math.round(feelsLike)}°C. Одевайтесь по ощущаемой.`;
+  if (feelsLike >= 28) return `<strong>// ЖАРА:</strong> Выбирайте лёгкие дышащие ткани. Не забудьте воду.`;
+  if (feelsLike <= -10) return `<strong>// МОРОЗ:</strong> Закройте лицо и руки — открытая кожа мёрзнет быстро.`;
+  return null;
 }
 
 // ─── RENDER ────────────────────────────────────────────────────────────────────
 function renderOutfit(outfit) {
-  let html = '';
-
   const sections = [
     { label: '// Верх', items: outfit.top },
     { label: '// Низ', items: outfit.bottom },
@@ -513,8 +600,9 @@ function renderOutfit(outfit) {
     { label: '// Аксессуары', items: outfit.extras },
   ];
 
+  let html = '';
   for (const sec of sections) {
-    if (sec.items.length === 0) continue;
+    if (!sec.items || sec.items.length === 0) continue;
     html += `<div class="outfit-category">
       <div class="outfit-cat-label">${sec.label}</div>
       <div class="outfit-items">
@@ -522,13 +610,26 @@ function renderOutfit(outfit) {
       </div>
     </div>`;
   }
-
-  if (outfit.note) {
-    html += `<div class="outfit-note">${outfit.note}</div>`;
-  }
+  if (outfit.note) html += `<div class="outfit-note">${outfit.note}</div>`;
 
   document.getElementById('outfitContent').innerHTML = html;
   document.getElementById('outfitPanel').style.display = 'block';
+  document.getElementById('styleTabs').style.display = 'flex';
+}
+
+function switchStyle(style) {
+  if (!currentWeather) return;
+  currentStyle = style;
+
+  // Update tab states
+  document.querySelectorAll('.style-tab').forEach(btn => btn.classList.remove('active'));
+  event.target.classList.add('active');
+
+  const outfits = getOutfits(
+    currentWeather.temp, currentWeather.feelsLike,
+    currentWeather.rain, currentWeather.wind, currentWeather.humidity
+  );
+  renderOutfit(outfits[style]);
 }
 
 // ─── WEATHER DISPLAY ───────────────────────────────────────────────────────────
@@ -582,8 +683,12 @@ async function getWeatherByCity() {
     const { lat, lon, name } = await geocodeCity(city);
     setStatus(`// ${name} — ${lat.toFixed(2)}, ${lon.toFixed(2)}`);
     const weather = await fetchWeather(lat, lon);
+    currentWeather = weather;
+    currentStyle = 'casual';
+    document.querySelectorAll('.style-tab').forEach((btn, i) => btn.classList.toggle('active', i === 0));
     renderWeather(weather);
-    renderOutfit(getOutfit(weather.temp, weather.feelsLike, weather.rain, weather.wind, weather.humidity));
+    const outfits = getOutfits(weather.temp, weather.feelsLike, weather.rain, weather.wind, weather.humidity);
+    renderOutfit(outfits.casual);
     setStatus(`// ДАННЫЕ АКТУАЛЬНЫ`);
   } catch (e) {
     setStatus(e.message, 'error');
@@ -597,8 +702,12 @@ async function getWeatherByGeo() {
   navigator.geolocation.getCurrentPosition(async (pos) => {
     try {
       const weather = await fetchWeather(pos.coords.latitude, pos.coords.longitude);
+      currentWeather = weather;
+      currentStyle = 'casual';
+      document.querySelectorAll('.style-tab').forEach((btn, i) => btn.classList.toggle('active', i === 0));
       renderWeather(weather);
-      renderOutfit(getOutfit(weather.temp, weather.feelsLike, weather.rain, weather.wind, weather.humidity));
+      const outfits = getOutfits(weather.temp, weather.feelsLike, weather.rain, weather.wind, weather.humidity);
+      renderOutfit(outfits.casual);
       setStatus(`// ГЕО: ${pos.coords.latitude.toFixed(2)}, ${pos.coords.longitude.toFixed(2)}`);
     } catch(e) {
       setStatus(e.message, 'error');
