@@ -219,13 +219,17 @@ transition: none;
     <rect x="99" y="96" width="2" height="16" rx="1" fill="#1a1a18"/>
   </g>
 
-  <!-- Second hand -->
+  <!-- Second hand — full diameter, center at 100,100 -->
 
-  <g id="hand-second" class="hand" style="transform-origin:100px 100px; --s-angle:0deg">
-    <line x1="100" y1="18" x2="100" y2="110" stroke="#b5241c" stroke-width="1" stroke-linecap="round"/>
-    <circle cx="100" cy="110" r="2" fill="#b5241c"/>
-    <!-- counterweight -->
-    <line x1="100" y1="110" x2="100" y2="122" stroke="#b5241c" stroke-width="2" stroke-linecap="round"/>
+  <!-- Invisible counterweight half (100→190), visible needle half (100→18) -->
+
+  <g id="hand-second">
+    <!-- visible needle: top half -->
+    <line x1="100" y1="18" x2="100" y2="100" stroke="#b5241c" stroke-width="1.2" stroke-linecap="round"/>
+    <!-- invisible counterweight: bottom half (keeps bbox centered) -->
+    <line x1="100" y1="100" x2="100" y2="130" stroke="none" stroke-width="1"/>
+    <!-- small red dot at tip -->
+    <circle cx="100" cy="22" r="2" fill="#b5241c"/>
   </g>
 
   <!-- Center cap -->
@@ -240,7 +244,7 @@ transition: none;
 <script>
   const DOOMSDAY_H = 23;
   const DOOMSDAY_M = 45;
-  const FIXED_S_DEG = 0; // seconds hand resting at 12
+  const FIXED_S_DEG = 354; // resting at last mark before 12 (twitches toward 360)
 
   const hourHand   = document.getElementById('hand-hour');
   const minuteHand = document.getElementById('hand-minute');
